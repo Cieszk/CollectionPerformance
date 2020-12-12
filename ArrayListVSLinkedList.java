@@ -44,28 +44,19 @@ public class ArrayListVSLinkedList implements TimeMeasurement {
         return insertArrayList;
     }
 
-    public static void removeElementFromList() {
-        System.out.println("\nRemove element from lists:\n");
+    public static double removeFromList(int index, List list) {
 
-        double removeElementArrayList = TimeMeasurement.checkTime(consumer -> arrayList.remove(1200));
-        System.out.println("Remove from ArrayList: " + removeElementArrayList + " seconds");
+        double removeElementFromList = TimeMeasurement.checkTime(consumer -> list.remove(index));
 
-        double removeElementLinkedList = TimeMeasurement.checkTime(consumer -> linkedList.remove(1200));
-        System.out.println("Remove from LinkedList: " + removeElementLinkedList + " seconds");
+        return removeElementFromList;
     }
 
-    public static void iterateTroughList() {
-        System.out.println("\nIterate trough lists:\n");
+    public static double iterateTroughList(List list) {
+        Iterator<Long> listIterator = list.iterator();
 
-        Iterator<Long> arrayIterator = arrayList.iterator();
-        Iterator<Long> linkedIterator = linkedList.iterator();
+        double iterateArrayList = TimeMeasurement.checkTime(consumer -> iterateList(listIterator));
 
-        double iterateArrayList = TimeMeasurement.checkTime(consumer -> iterateList(arrayIterator));
-        System.out.println("Iterate trough LinkedList: " + iterateArrayList + " seconds");
-
-        double iterateLinkedList = TimeMeasurement.checkTime(consumer -> iterateList(linkedIterator));
-        System.out.println("Iterate trough LinkedList: " + iterateLinkedList + " seconds");
-
+        return iterateArrayList;
     }
 
 
@@ -101,8 +92,8 @@ public class ArrayListVSLinkedList implements TimeMeasurement {
             averageLinked += getLists(random.nextInt(list.size()), list.get(1));
         }
 
-        averageArray /= list.size();
-        averageLinked /= list.size();
+        averageArray /= repeats;
+        averageLinked /= repeats;
         System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
     }
 
@@ -121,8 +112,46 @@ public class ArrayListVSLinkedList implements TimeMeasurement {
             averageLinked += insertIntoList(random.nextInt(list.size()), list.get(1), random.nextLong());
         }
 
-        averageArray /= list.size();
-        averageLinked /= list.size();
+        averageArray /= repeats;
+        averageLinked /= repeats;
+        System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
+    }
+
+    public static void removeAverageTime(long sizeOfList, int repeats) {
+        double averageArray = 0;
+        double averageLinked = 0;
+
+        List<List> list = new ArrayList<>();
+        list.add(CreateBigArray.createBigArrayList(sizeOfList));
+        list.add(CreateBigArray.createBigLinkedList(sizeOfList));
+
+        Random random = new Random();
+
+        for (int i = 0; i < repeats; i++) {
+            averageArray +=  removeFromList(random.nextInt(list.size()), list.get(0));
+            averageLinked += removeFromList(random.nextInt(list.size()), list.get(1));
+        }
+
+        averageArray /= repeats;
+        averageLinked /= repeats;
+        System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
+    }
+
+    public static void iterateAverageTime(long sizeOfList, int repeats) {
+        double averageArray = 0;
+        double averageLinked = 0;
+
+        List<List> list = new ArrayList<>();
+        list.add(CreateBigArray.createBigArrayList(sizeOfList));
+        list.add(CreateBigArray.createBigLinkedList(sizeOfList));
+
+        for (int i = 0; i < repeats; i++) {
+            averageArray +=  iterateTroughList(list.get(0));
+            averageLinked += iterateTroughList(list.get(1));
+        }
+
+        averageArray /= repeats;
+        averageLinked /= repeats;
         System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
     }
 
