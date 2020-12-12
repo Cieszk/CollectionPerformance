@@ -12,12 +12,6 @@ public class HashSetVSLinkedHashSetVSTreeSet implements TimeMeasurement {
      * Iterowania poprzez Sety
      */
 
-    private static ArrayList<Long> array = (ArrayList<Long>) CreateBigArray.createBigArrayList(5000);
-
-    public static HashSet<Long> hashSet = new HashSet<>(array);
-    public static LinkedHashSet<Long> linkedHashSet = new LinkedHashSet<>(array);
-    public static TreeSet<Long> treeSet = new TreeSet<>(array);
-
     private static void iterateSet(Iterator setIterator) {
         while (setIterator.hasNext()) setIterator.next();
     }
@@ -88,7 +82,6 @@ public class HashSetVSLinkedHashSetVSTreeSet implements TimeMeasurement {
 
     public static void getAverageTime(long sizeOfSet, int repeats) {
         ArrayList<Long> array = (ArrayList<Long>) CreateBigArray.createBigArrayList(sizeOfSet);
-        List<List> list = new ArrayList<>();
 
         HashSet<Long> hashSet = new HashSet<>(array);
         TreeSet<Long> treeSet = new TreeSet<>(array);
