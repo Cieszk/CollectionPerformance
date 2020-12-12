@@ -1,8 +1,7 @@
 package PerfomanceCheck;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ArrayListVSLinkedList implements TimeMeasurement {
     /**
@@ -14,47 +13,35 @@ public class ArrayListVSLinkedList implements TimeMeasurement {
      * Iterowania poprzez listy
      */
 
-    public static ArrayList<Long> arrayList = (ArrayList<Long>) CreateBigArray.createBigArrayList(8000);
-    public static LinkedList<Long> linkedList = (LinkedList<Long>) CreateBigArray.createBigLinkedList(8000);
+    public static ArrayList<Long> arrayList = (ArrayList<Long>) CreateBigArray.createBigArrayList(12000);
+    public static LinkedList<Long> linkedList = (LinkedList<Long>) CreateBigArray.createBigLinkedList(12000);
 
     private static void iterateList(Iterator listIterator) {
         while (listIterator.hasNext()) listIterator.next();
     }
 
 
-    public static void createLists() {
-        System.out.println("Creating lists:\n");
+    public static List<Double> createLists(long size) {
 
-        // ArrayList
-        double creatingArrayList = TimeMeasurement.checkTime(consumer -> CreateBigArray.createBigArrayList(8000));
-        System.out.println("Array list: " + creatingArrayList + " seconds");
+        double creatingArrayList = TimeMeasurement.checkTime(consumer -> CreateBigArray.createBigArrayList(size));
 
-        // LinkedList
-        double creatingLinkedList = TimeMeasurement.checkTime(consumer -> CreateBigArray.createBigLinkedList(8000));
-        System.out.println("Linked list: " + creatingLinkedList + " seconds");
+        double creatingLinkedList = TimeMeasurement.checkTime(consumer -> CreateBigArray.createBigLinkedList(size));
+
+        return Arrays.asList(creatingArrayList, creatingLinkedList);
     }
 
+    public static double getLists(int index, List list) {
 
-    public static void getLists() {
-        System.out.println("\nGetting lists:\n");
+        double gettingList = TimeMeasurement.checkTime(consumer -> list.get(index));
 
-        double gettingArrayList = TimeMeasurement.checkTime(consumer -> System.out.println(arrayList));
-        System.out.println("Array list: " + gettingArrayList + " seconds");
-
-
-        double gettingLinkedList = TimeMeasurement.checkTime(consumer -> System.out.println(linkedList));
-
-        System.out.println("Array list: " + gettingLinkedList + " seconds");
+        return gettingList;
     }
 
-    public static void insertIntoList() {
-        System.out.println("\nInserting element into lists:\n");
+    public static double insertIntoList(int index, List list, long element) {
 
-        double insertArrayList = TimeMeasurement.checkTime(consumer -> arrayList.add(45, 32453255L));
-        System.out.println("Inserting into ArrayList: " + insertArrayList + " seconds");
+        double insertArrayList = TimeMeasurement.checkTime(consumer -> list.add(index, element));
 
-        double insertLinkedList = TimeMeasurement.checkTime(consumer -> linkedList.add(45, 32453255L));
-        System.out.println("Inserting into LinkedList: " + insertLinkedList + " seconds");
+        return insertArrayList;
     }
 
     public static void removeElementFromList() {
@@ -79,6 +66,64 @@ public class ArrayListVSLinkedList implements TimeMeasurement {
         double iterateLinkedList = TimeMeasurement.checkTime(consumer -> iterateList(linkedIterator));
         System.out.println("Iterate trough LinkedList: " + iterateLinkedList + " seconds");
 
+    }
+
+
+    public static void createAverageTime(long sizeOfList, int repeats) {
+        List<List> list = new ArrayList<>();
+        double averageArray = 0;
+        double averageLinked = 0;
+        for (int i = 0; i < repeats; i++){
+            list.add(createLists(sizeOfList));
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            averageArray += (double)(list.get(i).get(0));
+            averageLinked += (double) (list.get(i).get(1));
+        }
+        averageArray /= list.size();
+        averageLinked /= list.size();
+        System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
+    }
+
+    public static void getAverageTime(long sizeOfList, int repeats) {
+        double averageArray = 0;
+        double averageLinked = 0;
+
+        List<List> list = new ArrayList<>();
+        list.add(CreateBigArray.createBigArrayList(sizeOfList));
+        list.add(CreateBigArray.createBigLinkedList(sizeOfList));
+
+        Random random = new Random();
+
+        for (int i = 0; i < repeats; i++) {
+            averageArray +=  getLists(random.nextInt(list.size()), list.get(0));
+            averageLinked += getLists(random.nextInt(list.size()), list.get(1));
+        }
+
+        averageArray /= list.size();
+        averageLinked /= list.size();
+        System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
+    }
+
+    public static void insertAverageTime(long sizeOfList, int repeats) {
+        double averageArray = 0;
+        double averageLinked = 0;
+
+        List<List> list = new ArrayList<>();
+        list.add(CreateBigArray.createBigArrayList(sizeOfList));
+        list.add(CreateBigArray.createBigLinkedList(sizeOfList));
+
+        Random random = new Random();
+
+        for (int i = 0; i < repeats; i++) {
+            averageArray +=  insertIntoList(random.nextInt(list.size()), list.get(0), random.nextLong());
+            averageLinked += insertIntoList(random.nextInt(list.size()), list.get(1), random.nextLong());
+        }
+
+        averageArray /= list.size();
+        averageLinked /= list.size();
+        System.out.println("Arraylist: "+ averageArray + "\nLinkedList: " + averageLinked);
     }
 
 
