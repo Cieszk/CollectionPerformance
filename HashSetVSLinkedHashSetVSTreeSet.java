@@ -22,75 +22,166 @@ public class HashSetVSLinkedHashSetVSTreeSet implements TimeMeasurement {
         while (setIterator.hasNext()) setIterator.next();
     }
 
-    public static void createSets() {
-        System.out.println("Creating sets:\n");
+    public static List<Double> createSets(List list) {
 
-        double creatingHashSet = TimeMeasurement.checkTime(consumer -> new HashSet<>(array));
-        System.out.println("Creating HashSet: " + creatingHashSet + " seconds");
+        double creatingHashSet = TimeMeasurement.checkTime(consumer -> new HashSet<>(list));
 
-        double creatingTreeSet = TimeMeasurement.checkTime(consumer -> new TreeSet<>(array));
-        System.out.println("Creating TreeSet: " + creatingTreeSet + " seconds");
+        double creatingTreeSet = TimeMeasurement.checkTime(consumer -> new TreeSet<>(list));
 
-        double creatingLinkedHashSet = TimeMeasurement.checkTime(consumer -> new LinkedHashSet<>(array));
-        System.out.println("Creating LinkedHashSet: " + creatingLinkedHashSet + " seconds");
+        double creatingLinkedHashSet = TimeMeasurement.checkTime(consumer -> new LinkedHashSet<>(list));
+
+        return Arrays.asList(creatingHashSet, creatingTreeSet, creatingLinkedHashSet);
+    }
+
+    public static double getSets(Set set) {
+
+        double gettingSet = TimeMeasurement.checkTime(consumer -> System.out.println(set));
+
+        return gettingSet;
+    }
+
+    public static double insertIntoSet(Set set, long value) {
+
+        double insertSet = TimeMeasurement.checkTime(consumer -> set.add(value));
+
+        return insertSet;
+    }
+
+    public static double removeElementFromSet(Set set, int index, List list) {
+
+        double removeElementSet = TimeMeasurement.checkTime(consumer -> set.remove(list.get(index)));
+
+        return removeElementSet;
+    }
+
+    public static double iterateTroughSet(Set set) {
+
+        Iterator<Long> setIterator = set.iterator();
+
+        double iterateSetTime = TimeMeasurement.checkTime(consumer -> iterateSet(setIterator));
+
+        return iterateSetTime;
 
     }
 
-    public static void getSets() {
-        System.out.println("\nGetting sets:\n");
+    public static void createAverageTime(long sizeOfSet, int repeats) {
+        List<List> list = new ArrayList<>();
+        double averageHashSet = 0;
+        double averageTreeSet = 0;
+        double averageLinkedHashSet = 0;
 
-        double gettingHashSet = TimeMeasurement.checkTime(consumer -> System.out.println(hashSet));
-        System.out.println("HashSet: " + gettingHashSet + " seconds");
+        for (int i = 0; i < repeats; i++) {
+            list.add(createSets(CreateBigArray.createBigArrayList(sizeOfSet)));
+        }
 
+        for (int i = 0; i < list.size(); i++) {
+            averageHashSet += (double) (list.get(i).get(0));
+            averageTreeSet += (double) (list.get(i).get(1));
+            averageLinkedHashSet += (double) (list.get(i).get(2));
+        }
+        averageHashSet /= repeats;
+        averageTreeSet /= repeats;
+        averageLinkedHashSet /= repeats;
 
-        double gettingLinkedHashSet = TimeMeasurement.checkTime(consumer -> System.out.println(linkedHashSet));
-        System.out.println("LinkedHashSet: " + gettingLinkedHashSet + " seconds");
-
-        double gettingTreeSet = TimeMeasurement.checkTime(consumer -> System.out.println(treeSet));
-        System.out.println("TreeSet: " + gettingTreeSet + " seconds");
+        System.out.println("HashSet: " + averageHashSet + "\nTreeSet: " + averageTreeSet + "\nLinkedHashSet: " + averageLinkedHashSet);
     }
 
-    public static void insertIntoList() {
-        System.out.println("\nInserting element into lists:\n");
+    public static void getAverageTime(long sizeOfSet, int repeats) {
+        ArrayList<Long> array = (ArrayList<Long>) CreateBigArray.createBigArrayList(sizeOfSet);
+        List<List> list = new ArrayList<>();
 
-        double insertHashSet = TimeMeasurement.checkTime(consumer -> hashSet.add(32453255L));
-        System.out.println("Inserting into HashSet: " + insertHashSet + " seconds");
+        HashSet<Long> hashSet = new HashSet<>(array);
+        TreeSet<Long> treeSet = new TreeSet<>(array);
+        LinkedHashSet<Long> linkedHashSet = new LinkedHashSet<>(array);
 
-        double insertLinkedHashSet = TimeMeasurement.checkTime(consumer -> linkedHashSet.add(32453255L));
-        System.out.println("Inserting into LinkedHashSet: " + insertLinkedHashSet + " seconds");
+        double averageHashSet = 0;
+        double averageTreeSet = 0;
+        double averageLinkedHashSet = 0;
 
-        double insertTreeSet = TimeMeasurement.checkTime(consumer -> treeSet.add(32453255L));
-        System.out.println("Inserting into TreeSet: " + insertTreeSet + " seconds");
+        for (int i = 0; i < repeats; i++) {
+            averageHashSet += getSets(hashSet);
+            averageTreeSet += getSets(treeSet);
+            averageLinkedHashSet += getSets(linkedHashSet);
+        }
+        averageHashSet /= repeats;
+        averageTreeSet /= repeats;
+        averageLinkedHashSet /= repeats;
+
+        System.out.println("HashSet: " + averageHashSet + "\nTreeSet: " + averageTreeSet + "\nLinkedHashSet: " + averageLinkedHashSet);
     }
 
-    public static void removeElementFromList() {
-        System.out.println("\nRemove element from lists:\n");
+    public static void insertAverageTime(long sizeOfSet, int repeats) {
+        ArrayList<Long> array = (ArrayList<Long>) CreateBigArray.createBigArrayList(sizeOfSet);
 
-        double removeElementHashSet = TimeMeasurement.checkTime(consumer -> hashSet.remove(array.get(500)));
-        System.out.println("Remove from HashSet: " + removeElementHashSet + " seconds");
+        HashSet<Long> hashSet = new HashSet<>(array);
+        TreeSet<Long> treeSet = new TreeSet<>(array);
+        LinkedHashSet<Long> linkedHashSet = new LinkedHashSet<>(array);
 
-        double removeElementLinkedHashSet = TimeMeasurement.checkTime(consumer -> linkedHashSet.remove(array.get(500)));
-        System.out.println("Remove from LinkedHashSet: " + removeElementLinkedHashSet + " seconds");
+        double averageHashSet = 0;
+        double averageTreeSet = 0;
+        double averageLinkedHashSet = 0;
 
-        double removeElementTreeSet = TimeMeasurement.checkTime(consumer -> treeSet.remove(array.get(500)));
-        System.out.println("Remove from TreeSet: " + removeElementTreeSet + " seconds");
+        Random random = new Random();
+
+        for (int i = 0; i < repeats; i++) {
+            averageHashSet += insertIntoSet(hashSet, random.nextLong());
+            averageTreeSet += insertIntoSet(treeSet, random.nextLong());
+            averageLinkedHashSet += insertIntoSet(linkedHashSet, random.nextLong());
+        }
+        averageHashSet /= repeats;
+        averageTreeSet /= repeats;
+        averageLinkedHashSet /= repeats;
+
+        System.out.println("HashSet: " + averageHashSet + "\nTreeSet: " + averageTreeSet + "\nLinkedHashSet: " + averageLinkedHashSet);
     }
 
-    public static void iterateTroughList() {
-        System.out.println("\nIterate trough lists:\n");
+    public static void removeAverageTime(long sizeOfSet, int repeats) {
+        ArrayList<Long> array = (ArrayList<Long>) CreateBigArray.createBigArrayList(sizeOfSet);
 
-        Iterator<Long> hashSetIterator = hashSet.iterator();
-        Iterator<Long> linkedHasSetIterator = linkedHashSet.iterator();
-        Iterator<Long> treeSetIterator = treeSet.iterator();
+        HashSet<Long> hashSet = new HashSet<>(array);
+        TreeSet<Long> treeSet = new TreeSet<>(array);
+        LinkedHashSet<Long> linkedHashSet = new LinkedHashSet<>(array);
 
-        double iterateHashSet = TimeMeasurement.checkTime(consumer -> iterateSet(hashSetIterator));
-        System.out.println("Iterate trough HashSet: " + iterateHashSet + " seconds");
+        double averageHashSet = 0;
+        double averageTreeSet = 0;
+        double averageLinkedHashSet = 0;
 
-        double iterateLinkedHashSet = TimeMeasurement.checkTime(consumer -> iterateSet(linkedHasSetIterator));
-        System.out.println("Iterate trough LinkedHashSet: " + iterateLinkedHashSet + " seconds");
+        Random random = new Random();
 
-        double iterateTreeSet = TimeMeasurement.checkTime(consumer -> iterateSet(treeSetIterator));
-        System.out.println("Iterate trough TreeSet: " + iterateTreeSet + " seconds");
+        for (int i = 0; i < repeats; i++) {
+            averageHashSet += removeElementFromSet(hashSet, random.nextInt(array.size()), array);
+            averageTreeSet += removeElementFromSet(treeSet, random.nextInt(array.size()), array);
+            averageLinkedHashSet += removeElementFromSet(linkedHashSet, random.nextInt(array.size()), array);
+        }
+        averageHashSet /= repeats;
+        averageTreeSet /= repeats;
+        averageLinkedHashSet /= repeats;
 
+        System.out.println("HashSet: " + averageHashSet + "\nTreeSet: " + averageTreeSet + "\nLinkedHashSet: " + averageLinkedHashSet);
     }
+
+    public static void iterateAverageTime(long sizeOfSet, int repeats) {
+        ArrayList<Long> array = (ArrayList<Long>) CreateBigArray.createBigArrayList(sizeOfSet);
+
+        HashSet<Long> hashSet = new HashSet<>(array);
+        TreeSet<Long> treeSet = new TreeSet<>(array);
+        LinkedHashSet<Long> linkedHashSet = new LinkedHashSet<>(array);
+
+        double averageHashSet = 0;
+        double averageTreeSet = 0;
+        double averageLinkedHashSet = 0;
+
+        for (int i = 0; i < repeats; i++) {
+            averageHashSet += iterateTroughSet(hashSet);
+            averageTreeSet += iterateTroughSet(treeSet);
+            averageLinkedHashSet += iterateTroughSet(linkedHashSet);
+        }
+        averageHashSet /= repeats;
+        averageTreeSet /= repeats;
+        averageLinkedHashSet /= repeats;
+
+        System.out.println("HashSet: " + averageHashSet + "\nTreeSet: " + averageTreeSet + "\nLinkedHashSet: " + averageLinkedHashSet);
+    }
+
+
 }
